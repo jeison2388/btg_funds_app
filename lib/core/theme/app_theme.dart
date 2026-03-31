@@ -10,6 +10,66 @@ abstract class AppTheme {
   static Color get successColor => _successColor;
   static Color get errorColor => _errorColor;
 
+  static TextTheme _textTheme(ColorScheme colorScheme) {
+    return TextTheme(
+      displayLarge: TextStyle(
+        fontSize: 36,
+        fontWeight: FontWeight.w700,
+        color: colorScheme.onSurface,
+      ),
+      displayMedium: TextStyle(
+        fontSize: 30,
+        fontWeight: FontWeight.w700,
+        color: colorScheme.onSurface,
+      ),
+      headlineMedium: TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.w700,
+        color: colorScheme.onSurface,
+      ),
+      titleLarge: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.w700,
+        color: colorScheme.onSurface,
+      ),
+      titleMedium: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: colorScheme.onSurface,
+      ),
+      titleSmall: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        color: colorScheme.onSurface,
+      ),
+      bodyLarge: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        color: colorScheme.onSurface,
+      ),
+      bodyMedium: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        color: colorScheme.onSurface,
+      ),
+      bodySmall: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+        color: colorScheme.onSurface,
+      ),
+      labelLarge: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        color: colorScheme.onSurface,
+      ),
+      labelMedium: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+        color: colorScheme.onSurface,
+      ),
+    );
+  }
+
   static ThemeData get lightTheme {
     final colorScheme = ColorScheme.fromSeed(
       seedColor: _primaryColor,
@@ -24,6 +84,7 @@ abstract class AppTheme {
       useMaterial3: true,
       colorScheme: colorScheme,
       fontFamily: 'Roboto',
+      textTheme: _textTheme(colorScheme),
       appBarTheme: AppBarTheme(
         centerTitle: true,
         elevation: 0,

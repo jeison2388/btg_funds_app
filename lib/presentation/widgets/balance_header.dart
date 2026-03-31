@@ -19,14 +19,7 @@ class BalanceHeader extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            theme.colorScheme.primary,
-            theme.colorScheme.secondary,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: theme.colorScheme.primary,
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(24),
           bottomRight: Radius.circular(24),
@@ -39,9 +32,7 @@ class BalanceHeader extends StatelessWidget {
           children: [
             Text(
               'Saldo disponible',
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: Colors.white70,
-              ),
+              style: theme.textTheme.titleMedium?.copyWith(color: Colors.white70),
             ),
             const SizedBox(height: 8),
             Text(

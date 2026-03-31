@@ -1,15 +1,19 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:btg_funds_app/core/enums/fund_category.dart';
 import 'package:btg_funds_app/core/di/injector.dart';
 import 'package:btg_funds_app/core/routes/app_router.gr.dart';
+import 'package:btg_funds_app/domain/models/subscription.dart';
 import 'package:btg_funds_app/presentation/cubits/funds/funds_cubit.dart';
+import 'package:btg_funds_app/presentation/cubits/funds/funds_state.dart';
 import 'package:btg_funds_app/presentation/cubits/portfolio/portfolio_cubit.dart';
 import 'package:btg_funds_app/presentation/cubits/portfolio/portfolio_state.dart';
 import 'package:btg_funds_app/presentation/cubits/transactions/transactions_cubit.dart';
 import 'package:btg_funds_app/presentation/widgets/balance_header.dart';
+import 'package:btg_funds_app/presentation/widgets/btg_paginated_table.dart';
+import 'package:btg_funds_app/presentation/widgets/btg_tabbed_filters.dart';
 import 'package:btg_funds_app/presentation/widgets/empty_state_widget.dart';
-import 'package:btg_funds_app/presentation/widgets/subscription_card.dart';
 
 @RoutePage()
 class HomeScreen extends StatelessWidget {
@@ -40,34 +44,80 @@ class _HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AutoTabsScaffold(
+    return AutoTabsRouter(
       routes: const [
         PortfolioRoute(),
         FundsRoute(),
         TransactionHistoryRoute(),
       ],
-      transitionBuilder: (context, child, animation) => child,
-      bottomNavigationBuilder: (_, tabsRouter) {
-        return BottomNavigationBar(
-          currentIndex: tabsRouter.activeIndex,
-          onTap: (index) {
-            tabsRouter.setActiveIndex(index);
-            _reloadTab(context, index);
-          },
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.account_balance_wallet),
-              label: 'Mi Portafolio',
+      builder: (context, child) {
+        final tabsRouter = AutoTabsRouter.of(context);
+        final isPortfolioTab = tabsRouter.activeIndex == 0;
+        final isFundsTab = tabsRouter.activeIndex == 1;
+        final isHistoryTab = tabsRouter.activeIndex == 2;
+        return Scaffold(
+          body: SafeArea(
+            child: Column(
+              children: [
+                BlocBuilder<PortfolioCubit, PortfolioState>(
+                  builder: (context, state) {
+                    return BalanceHeader(balance: state.balance);
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  child: BlocBuilder<FundsCubit, FundsState>(
+                    builder: (context, fundsState) {
+                      return BtgTabbedFilters(
+                        tabs: const [
+                          'Mi Portafolio',
+                          'Fondos',
+                          'Historial',
+                        ],
+                        selectedTab: tabsRouter.activeIndex,
+                        onTabChanged: (index) {
+                          tabsRouter.setActiveIndex(index);
+                          _reloadTab(context, index);
+                        },
+                        showSearch: isPortfolioTab || isFundsTab || isHistoryTab,
+                        searchHintText: isPortfolioTab
+                            ? 'Buscar suscripción por fondo'
+                            : isFundsTab
+                                ? 'Buscar fondo por nombre'
+                                : 'Buscar en historial',
+                        onSearch: (query) {
+                          if (isPortfolioTab) {
+                            context.read<PortfolioCubit>().filterByName(query);
+                          } else if (isFundsTab) {
+                            context.read<FundsCubit>().filterByName(query);
+                          } else if (isHistoryTab) {
+                            context.read<TransactionsCubit>().filterByName(query);
+                          }
+                        },
+                        filters: isFundsTab
+                            ? [
+                                BtgFilterDropdownConfig<FundCategory>(
+                                  label: 'Categoría',
+                                  defaultOptionLabel: 'Todos',
+                                  selectedValue: fundsState.selectedCategory,
+                                  items: const {
+                                    FundCategory.fpv: 'FPV',
+                                    FundCategory.fic: 'FIC',
+                                  },
+                                  onChanged: (category) => context
+                                      .read<FundsCubit>()
+                                      .filterByCategory(category),
+                                ),
+                              ]
+                            : const [],
+                      );
+                    },
+                  ),
+                ),
+                Expanded(child: child),
+              ],
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.trending_up),
-              label: 'Fondos',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.receipt_long),
-              label: 'Historial',
-            ),
-          ],
+          ),
         );
       },
     );
@@ -133,55 +183,75 @@ class _PortfolioView extends StatelessWidget {
         }
 
         return RefreshIndicator(
-          onRefresh: () =>
-              context.read<PortfolioCubit>().loadPortfolio(),
-          child: CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: BalanceHeader(balance: state.balance),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.fromLTRB(16, 24, 16, 8),
-                  child: Text(
-                    'Mis fondos suscritos',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+          onRefresh: () => context.read<PortfolioCubit>().loadPortfolio(),
+          child: ListView(
+            padding: const EdgeInsets.only(bottom: 16),
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                child: Text(
+                  'Mis fondos suscritos',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              if (state.subscriptions.isEmpty)
-                const SliverFillRemaining(
-                  hasScrollBody: false,
+              if (state.filteredSubscriptions.isEmpty)
+                const SizedBox(
+                  height: 300,
                   child: EmptyStateWidget(
                     icon: Icons.account_balance_outlined,
-                    title: 'Sin suscripciones',
-                    subtitle:
-                        'Aún no te has suscrito a ningún fondo.\nExplora los fondos disponibles.',
+                    title: 'Sin resultados',
+                    subtitle: 'No hay suscripciones que coincidan con la búsqueda.',
                   ),
                 )
               else
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final sub = state.subscriptions[index];
-                      return SubscriptionCard(
-                        subscription: sub,
-                        onCancel: () => _showCancelDialog(
-                          context,
-                          sub.fundId,
-                          sub.fundName,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: BtgPaginatedTable<Subscription>(
+                    items: state.filteredSubscriptions,
+                    initialRowsPerPage: 5,
+                    columns: [
+                      BtgTableColumn<Subscription>(
+                        label: 'Fondo',
+                        flex: 2.2,
+                        cellBuilder: (sub) => Text(sub.fundName),
+                      ),
+                      BtgTableColumn<Subscription>(
+                        label: 'Monto suscrito',
+                        flex: 1.4,
+                        cellBuilder: (sub) => Text(
+                          '\$ ${sub.amount.toStringAsFixed(0)}',
                         ),
-                      );
-                    },
-                    childCount: state.subscriptions.length,
+                      ),
+                      BtgTableColumn<Subscription>(
+                        label: 'Fecha',
+                        flex: 1.4,
+                        cellBuilder: (sub) => Text(
+                          '${sub.date.day.toString().padLeft(2, '0')}/'
+                          '${sub.date.month.toString().padLeft(2, '0')}/'
+                          '${sub.date.year}',
+                        ),
+                      ),
+                      BtgTableColumn<Subscription>(
+                        label: 'Acciones',
+                        flex: 1.2,
+                        cellBuilder: (sub) => Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton.icon(
+                            onPressed: () => _showCancelDialog(
+                              context,
+                              sub.fundId,
+                              sub.fundName,
+                            ),
+                            icon: const Icon(Icons.close, size: 16),
+                            label: const Text('Cancelar'),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              const SliverToBoxAdapter(
-                child: SizedBox(height: 16),
-              ),
             ],
           ),
         );

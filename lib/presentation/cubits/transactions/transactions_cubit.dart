@@ -23,4 +23,8 @@ class TransactionsCubit extends Cubit<TransactionsState> {
       ));
     }
   }
+
+  void filterByName(String query) {
+    emit(state.copyWith(searchQuery: query));
+  }
 }

@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Flutter (Chrome 8090)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "debug",
+      "deviceId": "chrome",
+      "args": [
+        "--web-hostname",
+        "localhost",
+        "--web-port",
+        "8090"
+      ]
+    }
+  ]
+}

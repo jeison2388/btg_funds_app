@@ -27,4 +27,8 @@ class FundsCubit extends Cubit<FundsState> {
   void filterByCategory(FundCategory? category) {
     emit(state.copyWith(selectedCategory: () => category));
   }
+
+  void filterByName(String query) {
+    emit(state.copyWith(searchQuery: query));
+  }
 }

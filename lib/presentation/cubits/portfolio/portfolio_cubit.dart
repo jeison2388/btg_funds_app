@@ -128,4 +128,8 @@ class PortfolioCubit extends Cubit<PortfolioState> {
       successMessage: () => null,
     ));
   }
+
+  void filterByName(String query) {
+    emit(state.copyWith(searchQuery: query));
+  }
 }
