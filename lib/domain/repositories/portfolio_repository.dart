@@ -6,5 +6,6 @@ abstract class PortfolioRepository {
   Future<double> getBalance();
   Future<List<Subscription>> getSubscriptions();
   Future<void> subscribe(Fund fund, NotificationMethod method);
-  Future<void> cancel(String fundId);
+  /// Devuelve el monto reembolsado al cancelar (para historial / trazabilidad).
+  Future<double> cancel(String fundId);
 }

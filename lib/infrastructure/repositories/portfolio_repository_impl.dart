@@ -3,13 +3,17 @@ import 'package:btg_funds_app/core/errors/app_exception.dart';
 import 'package:btg_funds_app/domain/models/fund.dart';
 import 'package:btg_funds_app/domain/models/subscription.dart';
 import 'package:btg_funds_app/domain/repositories/portfolio_repository.dart';
+import 'package:btg_funds_app/infrastructure/adapters/subscription_adapter.dart';
 import 'package:btg_funds_app/infrastructure/datasources/hive_local_datasource.dart';
-import 'package:btg_funds_app/infrastructure/mappers/subscription_mapper.dart';
 
 class PortfolioRepositoryImpl implements PortfolioRepository {
   final HiveLocalDatasource _localDatasource;
+  final SubscriptionAdapter _subscriptionAdapter;
 
-  PortfolioRepositoryImpl(this._localDatasource);
+  PortfolioRepositoryImpl(
+    this._localDatasource,
+    this._subscriptionAdapter,
+  );
 
   @override
   Future<double> getBalance() async {
@@ -19,7 +23,7 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
   @override
   Future<List<Subscription>> getSubscriptions() async {
     final dtos = _localDatasource.getSubscriptions();
-    return dtos.map(SubscriptionMapper.toModel).toList();
+    return _subscriptionAdapter.toListModel(dtos);
   }
 
   @override
@@ -44,7 +48,7 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
     );
 
     await _localDatasource.addSubscription(
-      SubscriptionMapper.toDto(subscription),
+      _subscriptionAdapter.fromModel(subscription),
     );
     await _localDatasource.updateBalance(
       currentBalance - fund.minimumAmount,
@@ -52,14 +56,16 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
   }
 
   @override
-  Future<void> cancel(String fundId) async {
+  Future<double> cancel(String fundId) async {
     final existing = _localDatasource.getSubscriptionByFundId(fundId);
     if (existing == null) {
       throw const SubscriptionNotFoundException();
     }
 
+    final refundAmount = existing.amount;
     final currentBalance = _localDatasource.getBalance();
     await _localDatasource.removeSubscriptionByFundId(fundId);
-    await _localDatasource.updateBalance(currentBalance + existing.amount);
+    await _localDatasource.updateBalance(currentBalance + refundAmount);
+    return refundAmount;
   }
 }

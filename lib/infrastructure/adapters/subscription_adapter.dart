@@ -1,22 +1,27 @@
 import 'package:btg_funds_app/core/enums/notification_method.dart';
+import 'package:btg_funds_app/domain/adapters/model_adapter.dart';
 import 'package:btg_funds_app/domain/models/subscription.dart';
 import 'package:btg_funds_app/infrastructure/dtos/subscription_dto.dart';
 
-abstract class SubscriptionMapper {
-  static Subscription toModel(SubscriptionDto dto) {
+class SubscriptionAdapter extends ModelAdapter<Subscription, SubscriptionDto> {
+  const SubscriptionAdapter();
+
+  @override
+  Subscription toModel(SubscriptionDto external) {
     return Subscription(
-      fundId: dto.fundId,
-      fundName: dto.fundName,
-      amount: dto.amount,
-      date: dto.date,
+      fundId: external.fundId,
+      fundName: external.fundName,
+      amount: external.amount,
+      date: external.date,
       notificationMethod: NotificationMethod.values.firstWhere(
-        (e) => e.name == dto.notificationMethod,
+        (e) => e.name == external.notificationMethod,
         orElse: () => NotificationMethod.email,
       ),
     );
   }
 
-  static SubscriptionDto toDto(Subscription model) {
+  @override
+  SubscriptionDto fromModel(Subscription model) {
     return SubscriptionDto(
       fundId: model.fundId,
       fundName: model.fundName,

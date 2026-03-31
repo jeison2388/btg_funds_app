@@ -1,11 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:btg_funds_app/core/enums/notification_method.dart';
 import 'package:btg_funds_app/domain/models/subscription.dart';
+import 'package:btg_funds_app/infrastructure/adapters/subscription_adapter.dart';
 import 'package:btg_funds_app/infrastructure/dtos/subscription_dto.dart';
-import 'package:btg_funds_app/infrastructure/mappers/subscription_mapper.dart';
 
 void main() {
-  group('SubscriptionMapper', () {
+  group('SubscriptionAdapter', () {
+    const adapter = SubscriptionAdapter();
     final testDate = DateTime(2025, 6, 15, 10, 30);
 
     test('toModel convierte DTO a modelo correctamente', () {
@@ -17,7 +18,7 @@ void main() {
         notificationMethod: 'email',
       );
 
-      final model = SubscriptionMapper.toModel(dto);
+      final model = adapter.toModel(dto);
 
       expect(model.fundId, '1');
       expect(model.fundName, 'FPV_BTG_PACTUAL_RECAUDADORA');
@@ -26,7 +27,7 @@ void main() {
       expect(model.notificationMethod, NotificationMethod.email);
     });
 
-    test('toDto convierte modelo a DTO correctamente', () {
+    test('fromModel convierte modelo a DTO correctamente', () {
       final model = Subscription(
         fundId: '2',
         fundName: 'FPV_BTG_PACTUAL_ECOPETROL',
@@ -35,7 +36,7 @@ void main() {
         notificationMethod: NotificationMethod.sms,
       );
 
-      final dto = SubscriptionMapper.toDto(model);
+      final dto = adapter.fromModel(model);
 
       expect(dto.fundId, '2');
       expect(dto.fundName, 'FPV_BTG_PACTUAL_ECOPETROL');
@@ -44,7 +45,7 @@ void main() {
       expect(dto.notificationMethod, 'sms');
     });
 
-    test('conversion bidireccional mantiene datos intactos', () {
+    test('conversión bidireccional mantiene datos intactos', () {
       final original = Subscription(
         fundId: '3',
         fundName: 'DEUDAPRIVADA',
@@ -53,8 +54,8 @@ void main() {
         notificationMethod: NotificationMethod.email,
       );
 
-      final dto = SubscriptionMapper.toDto(original);
-      final restored = SubscriptionMapper.toModel(dto);
+      final dto = adapter.fromModel(original);
+      final restored = adapter.toModel(dto);
 
       expect(restored, original);
     });

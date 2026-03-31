@@ -21,6 +21,9 @@ class BtgPaginatedTable<T> extends StatefulWidget {
   final double mobileBreakpoint;
   final Widget Function(T item)? mobileItemBuilder;
 
+  /// Color de fondo opcional por fila (p. ej. según tipo de dato).
+  final Color? Function(T item)? rowBackgroundColor;
+
   const BtgPaginatedTable({
     super.key,
     required this.items,
@@ -30,6 +33,7 @@ class BtgPaginatedTable<T> extends StatefulWidget {
     this.emptyMessage,
     this.mobileBreakpoint = 760,
     this.mobileItemBuilder,
+    this.rowBackgroundColor,
   });
 
   @override
@@ -124,7 +128,8 @@ class _BtgPaginatedTableState<T> extends State<BtgPaginatedTable<T>> {
             ...pageItems.asMap().entries.map((entry) {
               final item = entry.value;
               final isLastRow = entry.key == pageItems.length - 1;
-              return IntrinsicHeight(
+              final rowBg = widget.rowBackgroundColor?.call(item);
+              Widget row = IntrinsicHeight(
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: widget.columns.map((column) {
@@ -135,6 +140,7 @@ class _BtgPaginatedTableState<T> extends State<BtgPaginatedTable<T>> {
                         padding: const EdgeInsets.all(12),
                         alignment: Alignment.centerLeft,
                         decoration: BoxDecoration(
+                          color: rowBg,
                           border: Border(
                             right: BorderSide(color: borderColor),
                             bottom: isLastRow
@@ -148,6 +154,7 @@ class _BtgPaginatedTableState<T> extends State<BtgPaginatedTable<T>> {
                   }).toList(),
                 ),
               );
+              return row;
             }),
           ],
         ),
@@ -165,8 +172,10 @@ class _BtgPaginatedTableState<T> extends State<BtgPaginatedTable<T>> {
             child: widget.mobileItemBuilder!(item),
           );
         }
+        final cardBg = widget.rowBackgroundColor?.call(item);
         return Card(
           margin: const EdgeInsets.only(bottom: 8),
+          color: cardBg,
           child: Padding(
             padding: const EdgeInsets.all(12),
             child: Column(

@@ -1,30 +1,35 @@
 import 'package:btg_funds_app/core/enums/notification_method.dart';
 import 'package:btg_funds_app/core/enums/transaction_type.dart';
+import 'package:btg_funds_app/domain/adapters/model_adapter.dart';
 import 'package:btg_funds_app/domain/models/transaction.dart';
 import 'package:btg_funds_app/infrastructure/dtos/transaction_dto.dart';
 
-abstract class TransactionMapper {
-  static FundTransaction toModel(TransactionDto dto) {
+class TransactionAdapter extends ModelAdapter<FundTransaction, TransactionDto> {
+  const TransactionAdapter();
+
+  @override
+  FundTransaction toModel(TransactionDto external) {
     return FundTransaction(
-      id: dto.id,
+      id: external.id,
       type: TransactionType.values.firstWhere(
-        (e) => e.name == dto.type,
+        (e) => e.name == external.type,
         orElse: () => TransactionType.subscription,
       ),
-      fundId: dto.fundId,
-      fundName: dto.fundName,
-      amount: dto.amount,
-      date: dto.date,
-      notificationMethod: dto.notificationMethod != null
+      fundId: external.fundId,
+      fundName: external.fundName,
+      amount: external.amount,
+      date: external.date,
+      notificationMethod: external.notificationMethod != null
           ? NotificationMethod.values.firstWhere(
-              (e) => e.name == dto.notificationMethod,
+              (e) => e.name == external.notificationMethod,
               orElse: () => NotificationMethod.email,
             )
           : null,
     );
   }
 
-  static TransactionDto toDto(FundTransaction model) {
+  @override
+  TransactionDto fromModel(FundTransaction model) {
     return TransactionDto(
       id: model.id,
       type: model.type.name,

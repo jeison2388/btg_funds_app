@@ -110,7 +110,7 @@ void main() {
     });
 
     test('cancelSubscription emite success y actualiza saldo', () async {
-      when(() => mockPortfolioRepo.cancel(any())).thenAnswer((_) async {});
+      when(() => mockPortfolioRepo.cancel(any())).thenAnswer((_) async => 75000);
       when(() => mockTransactionRepo.add(any())).thenAnswer((_) async {});
       when(() => mockPortfolioRepo.getBalance()).thenAnswer((_) async => 500000);
       when(() => mockPortfolioRepo.getSubscriptions()).thenAnswer((_) async => []);

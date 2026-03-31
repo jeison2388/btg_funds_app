@@ -2,6 +2,9 @@ import 'package:kiwi/kiwi.dart';
 import 'package:btg_funds_app/domain/repositories/fund_repository.dart';
 import 'package:btg_funds_app/domain/repositories/portfolio_repository.dart';
 import 'package:btg_funds_app/domain/repositories/transaction_repository.dart';
+import 'package:btg_funds_app/infrastructure/adapters/fund_adapter.dart';
+import 'package:btg_funds_app/infrastructure/adapters/subscription_adapter.dart';
+import 'package:btg_funds_app/infrastructure/adapters/transaction_adapter.dart';
 import 'package:btg_funds_app/infrastructure/datasources/hive_local_datasource.dart';
 import 'package:btg_funds_app/infrastructure/datasources/mock_api_datasource.dart';
 import 'package:btg_funds_app/infrastructure/repositories/fund_repository_impl.dart';
@@ -15,19 +18,33 @@ abstract class Injector {
   static final KiwiContainer container = KiwiContainer();
 
   static void setup() {
+    // Adapters (contrato dominio ↔ DTO / persistencia)
+    container.registerSingleton((_) => const FundAdapter());
+    container.registerSingleton((_) => const SubscriptionAdapter());
+    container.registerSingleton((_) => const TransactionAdapter());
+
     // Datasources
     container.registerSingleton((_) => MockApiDatasource());
     container.registerSingleton((_) => HiveLocalDatasource());
 
     // Repositories
     container.registerFactory<FundRepository>(
-      (c) => FundRepositoryImpl(c.resolve<MockApiDatasource>()),
+      (c) => FundRepositoryImpl(
+        c.resolve<MockApiDatasource>(),
+        c.resolve<FundAdapter>(),
+      ),
     );
     container.registerFactory<PortfolioRepository>(
-      (c) => PortfolioRepositoryImpl(c.resolve<HiveLocalDatasource>()),
+      (c) => PortfolioRepositoryImpl(
+        c.resolve<HiveLocalDatasource>(),
+        c.resolve<SubscriptionAdapter>(),
+      ),
     );
     container.registerFactory<TransactionRepository>(
-      (c) => TransactionRepositoryImpl(c.resolve<HiveLocalDatasource>()),
+      (c) => TransactionRepositoryImpl(
+        c.resolve<HiveLocalDatasource>(),
+        c.resolve<TransactionAdapter>(),
+      ),
     );
 
     // Cubits

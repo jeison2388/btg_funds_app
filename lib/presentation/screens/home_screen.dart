@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:btg_funds_app/core/enums/fund_category.dart';
+import 'package:btg_funds_app/core/utils/app_feedback.dart';
 import 'package:btg_funds_app/core/di/injector.dart';
 import 'package:btg_funds_app/core/routes/app_router.gr.dart';
 import 'package:btg_funds_app/domain/models/subscription.dart';
@@ -153,30 +154,19 @@ class _PortfolioView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return BlocConsumer<PortfolioCubit, PortfolioState>(
       listener: (context, state) {
         if (state.successMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.successMessage!),
-              backgroundColor: Colors.green,
-            ),
-          );
+          AppFeedback.alertToastSuccess(context, state.successMessage!);
           context.read<PortfolioCubit>().clearMessages();
         }
         if (state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage!),
-              backgroundColor: theme.colorScheme.error,
-            ),
-          );
+          AppFeedback.alertToastError(context, state.errorMessage!);
           context.read<PortfolioCubit>().clearMessages();
         }
       },
       builder: (context, state) {
+        final theme = Theme.of(context);
         if (state.status == PortfolioStatus.loading &&
             state.subscriptions.isEmpty) {
           return const Center(child: CircularProgressIndicator());

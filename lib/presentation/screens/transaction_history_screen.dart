@@ -71,6 +71,12 @@ class _TransactionHistoryView extends StatelessWidget {
             children: [
               BtgPaginatedTable<FundTransaction>(
                 items: state.filteredTransactions,
+                rowBackgroundColor: (tx) {
+                  if (tx.type == TransactionType.subscription) {
+                    return theme.colorScheme.error.withValues(alpha: 0.08);
+                  }
+                  return const Color(0xFF2E7D32).withValues(alpha: 0.10);
+                },
                 columns: [
                   BtgTableColumn<FundTransaction>(
                     label: 'Fondo',

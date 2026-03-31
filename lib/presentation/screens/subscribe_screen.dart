@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:btg_funds_app/core/di/injector.dart';
 import 'package:btg_funds_app/core/enums/notification_method.dart';
 import 'package:btg_funds_app/core/theme/app_theme.dart';
+import 'package:btg_funds_app/core/utils/app_feedback.dart';
 import 'package:btg_funds_app/domain/models/fund.dart';
 import 'package:btg_funds_app/presentation/cubits/portfolio/portfolio_cubit.dart';
 import 'package:btg_funds_app/presentation/cubits/portfolio/portfolio_state.dart';
@@ -41,22 +42,12 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
       child: BlocConsumer<PortfolioCubit, PortfolioState>(
         listener: (context, state) {
           if (state.successMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.successMessage!),
-                backgroundColor: AppTheme.successColor,
-              ),
-            );
+            AppFeedback.alertToastSuccess(context, state.successMessage!);
             context.read<PortfolioCubit>().clearMessages();
             context.router.maybePop();
           }
           if (state.errorMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage!),
-                backgroundColor: AppTheme.errorColor,
-              ),
-            );
+            AppFeedback.alertToastError(context, state.errorMessage!);
             context.read<PortfolioCubit>().clearMessages();
           }
         },

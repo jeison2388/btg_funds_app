@@ -87,14 +87,14 @@ class PortfolioCubit extends Cubit<PortfolioState> {
       successMessage: () => null,
     ));
     try {
-      await _portfolioRepository.cancel(fundId);
+      final refundAmount = await _portfolioRepository.cancel(fundId);
 
       final transaction = FundTransaction(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         type: TransactionType.cancellation,
         fundId: fundId,
         fundName: fundName,
-        amount: 0,
+        amount: refundAmount,
         date: DateTime.now(),
       );
       await _transactionRepository.add(transaction);
