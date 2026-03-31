@@ -1,0 +1,9 @@
+{
+  "name": "BTG Funds",
+  "short_name": "BTG Funds",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#001E60",
+  "theme_color": "#001E60",
+  "description": "Manejo de Fondos FPV/FIC para clientes BTG Pactual"
+}
