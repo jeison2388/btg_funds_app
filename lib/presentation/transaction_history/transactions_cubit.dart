@@ -8,16 +8,20 @@ class TransactionsCubit extends Cubit<TransactionsState> {
   TransactionsCubit(this._transactionRepository)
       : super(const TransactionsState());
 
+  void _safeEmit(TransactionsState newState) {
+    if (!isClosed) emit(newState);
+  }
+
   Future<void> loadTransactions() async {
-    emit(state.copyWith(status: TransactionsStatus.loading));
+    _safeEmit(state.copyWith(status: TransactionsStatus.loading));
     try {
       final transactions = await _transactionRepository.getAll();
-      emit(state.copyWith(
+      _safeEmit(state.copyWith(
         status: TransactionsStatus.loaded,
         transactions: transactions,
       ));
     } catch (e) {
-      emit(state.copyWith(
+      _safeEmit(state.copyWith(
         status: TransactionsStatus.error,
         errorMessage: () => 'Error al cargar el historial: $e',
       ));
@@ -25,6 +29,6 @@ class TransactionsCubit extends Cubit<TransactionsState> {
   }
 
   void filterByName(String query) {
-    emit(state.copyWith(searchQuery: query));
+    _safeEmit(state.copyWith(searchQuery: query));
   }
 }

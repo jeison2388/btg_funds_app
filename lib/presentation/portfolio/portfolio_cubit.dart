@@ -17,18 +17,22 @@ class PortfolioCubit extends Cubit<PortfolioState> {
     this._transactionRepository,
   ) : super(const PortfolioState());
 
+  void _safeEmit(PortfolioState newState) {
+    if (!isClosed) emit(newState);
+  }
+
   Future<void> loadPortfolio() async {
-    emit(state.copyWith(status: PortfolioStatus.loading));
+    _safeEmit(state.copyWith(status: PortfolioStatus.loading));
     try {
       final balance = await _portfolioRepository.getBalance();
       final subscriptions = await _portfolioRepository.getSubscriptions();
-      emit(state.copyWith(
+      _safeEmit(state.copyWith(
         status: PortfolioStatus.loaded,
         balance: balance,
         subscriptions: subscriptions,
       ));
     } catch (e) {
-      emit(state.copyWith(
+      _safeEmit(state.copyWith(
         status: PortfolioStatus.error,
         errorMessage: () => 'Error al cargar el portafolio: $e',
       ));
@@ -36,7 +40,7 @@ class PortfolioCubit extends Cubit<PortfolioState> {
   }
 
   Future<void> subscribe(Fund fund, NotificationMethod method) async {
-    emit(state.copyWith(
+    _safeEmit(state.copyWith(
       status: PortfolioStatus.loading,
       errorMessage: () => null,
       successMessage: () => null,
@@ -58,7 +62,7 @@ class PortfolioCubit extends Cubit<PortfolioState> {
       final balance = await _portfolioRepository.getBalance();
       final subscriptions = await _portfolioRepository.getSubscriptions();
 
-      emit(state.copyWith(
+      _safeEmit(state.copyWith(
         status: PortfolioStatus.loaded,
         balance: balance,
         subscriptions: subscriptions,
@@ -67,13 +71,13 @@ class PortfolioCubit extends Cubit<PortfolioState> {
             'Notificación enviada por ${method.label}.',
       ));
     } on AppException catch (e) {
-      emit(state.copyWith(
+      _safeEmit(state.copyWith(
         status: PortfolioStatus.loaded,
         errorMessage: () => e.message,
       ));
       await loadPortfolio();
     } catch (e) {
-      emit(state.copyWith(
+      _safeEmit(state.copyWith(
         status: PortfolioStatus.error,
         errorMessage: () => 'Error inesperado al suscribirse: $e',
       ));
@@ -81,7 +85,7 @@ class PortfolioCubit extends Cubit<PortfolioState> {
   }
 
   Future<void> cancelSubscription(String fundId, String fundName) async {
-    emit(state.copyWith(
+    _safeEmit(state.copyWith(
       status: PortfolioStatus.loading,
       errorMessage: () => null,
       successMessage: () => null,
@@ -102,7 +106,7 @@ class PortfolioCubit extends Cubit<PortfolioState> {
       final balance = await _portfolioRepository.getBalance();
       final subscriptions = await _portfolioRepository.getSubscriptions();
 
-      emit(state.copyWith(
+      _safeEmit(state.copyWith(
         status: PortfolioStatus.loaded,
         balance: balance,
         subscriptions: subscriptions,
@@ -110,12 +114,12 @@ class PortfolioCubit extends Cubit<PortfolioState> {
             'Se ha cancelado la suscripción a $fundName exitosamente.',
       ));
     } on AppException catch (e) {
-      emit(state.copyWith(
+      _safeEmit(state.copyWith(
         status: PortfolioStatus.loaded,
         errorMessage: () => e.message,
       ));
     } catch (e) {
-      emit(state.copyWith(
+      _safeEmit(state.copyWith(
         status: PortfolioStatus.error,
         errorMessage: () => 'Error inesperado al cancelar: $e',
       ));
@@ -123,13 +127,13 @@ class PortfolioCubit extends Cubit<PortfolioState> {
   }
 
   void clearMessages() {
-    emit(state.copyWith(
+    _safeEmit(state.copyWith(
       errorMessage: () => null,
       successMessage: () => null,
     ));
   }
 
   void filterByName(String query) {
-    emit(state.copyWith(searchQuery: query));
+    _safeEmit(state.copyWith(searchQuery: query));
   }
 }

@@ -138,11 +138,11 @@ class _FundsView extends StatelessWidget {
     );
   }
 
-  Future<void> _navigateToSubscribe(
-      BuildContext context, Fund fund) async {
-    await context.router.push(SubscribeRoute(fund: fund));
-    if (context.mounted) {
-      context.read<PortfolioCubit>().loadPortfolio();
-    }
+  void _navigateToSubscribe(BuildContext context, Fund fund) {
+    context.router.push(SubscribeRoute(fund: fund)).then((_) {
+      if (context.mounted) {
+        context.read<PortfolioCubit>().loadPortfolio();
+      }
+    }).catchError((_) {});
   }
 }

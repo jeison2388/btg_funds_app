@@ -9,11 +9,30 @@ class AppRouter extends RootStackRouter {
           page: HomeRoute.page,
           initial: true,
           children: [
-            AutoRoute(page: FundsRoute.page),
             AutoRoute(page: PortfolioRoute.page),
+            AutoRoute(page: FundsRoute.page),
             AutoRoute(page: TransactionHistoryRoute.page),
           ],
         ),
-        AutoRoute(page: SubscribeRoute.page),
+        CustomRoute(
+          page: SubscribeRoute.page,
+          fullscreenDialog: true,
+          transitionsBuilder: TransitionsBuilders.slideBottom,
+          guards: [_SubscribeGuard()],
+        ),
       ];
+}
+
+/// Protege la ruta de suscripción contra accesos sin argumentos
+/// (p. ej. botón atrás del navegador web que reconstruye la URL).
+class _SubscribeGuard extends AutoRouteGuard {
+  @override
+  void onNavigation(NavigationResolver resolver, StackRouter router) {
+    final route = resolver.route;
+    if (route.args is SubscribeRouteArgs) {
+      resolver.next();
+    } else {
+      router.replaceAll([const HomeRoute()]);
+    }
+  }
 }

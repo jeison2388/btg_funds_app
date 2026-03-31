@@ -38,11 +38,17 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
     return BlocProvider(
       create: (_) => Injector.resolve<PortfolioCubit>()..loadPortfolio(),
       child: BlocConsumer<PortfolioCubit, PortfolioState>(
+        listenWhen: (previous, current) {
+          return previous.successMessage != current.successMessage ||
+              previous.errorMessage != current.errorMessage;
+        },
         listener: (context, state) {
           if (state.successMessage != null) {
             AppFeedback.alertToastSuccess(context, state.successMessage!);
             context.read<PortfolioCubit>().clearMessages();
-            context.router.maybePop();
+            if (context.mounted) {
+              context.router.maybePop();
+            }
           }
           if (state.errorMessage != null) {
             AppFeedback.alertToastError(context, state.errorMessage!);

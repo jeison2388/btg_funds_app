@@ -8,16 +8,20 @@ class FundsCubit extends Cubit<FundsState> {
 
   FundsCubit(this._fundRepository) : super(const FundsState());
 
+  void _safeEmit(FundsState newState) {
+    if (!isClosed) emit(newState);
+  }
+
   Future<void> loadFunds() async {
-    emit(state.copyWith(status: FundsStatus.loading));
+    _safeEmit(state.copyWith(status: FundsStatus.loading));
     try {
       final funds = await _fundRepository.getAll();
-      emit(state.copyWith(
+      _safeEmit(state.copyWith(
         status: FundsStatus.loaded,
         funds: funds,
       ));
     } catch (e) {
-      emit(state.copyWith(
+      _safeEmit(state.copyWith(
         status: FundsStatus.error,
         errorMessage: () => 'Error al cargar los fondos: $e',
       ));
@@ -25,10 +29,10 @@ class FundsCubit extends Cubit<FundsState> {
   }
 
   void filterByCategory(FundCategory? category) {
-    emit(state.copyWith(selectedCategory: () => category));
+    _safeEmit(state.copyWith(selectedCategory: () => category));
   }
 
   void filterByName(String query) {
-    emit(state.copyWith(searchQuery: query));
+    _safeEmit(state.copyWith(searchQuery: query));
   }
 }
