@@ -10,9 +10,9 @@ import 'package:btg_funds_app/infrastructure/datasources/mock_api_datasource.dar
 import 'package:btg_funds_app/infrastructure/repositories/fund_repository_impl.dart';
 import 'package:btg_funds_app/infrastructure/repositories/portfolio_repository_impl.dart';
 import 'package:btg_funds_app/infrastructure/repositories/transaction_repository_impl.dart';
-import 'package:btg_funds_app/presentation/cubits/funds/funds_cubit.dart';
-import 'package:btg_funds_app/presentation/cubits/portfolio/portfolio_cubit.dart';
-import 'package:btg_funds_app/presentation/cubits/transactions/transactions_cubit.dart';
+import 'package:btg_funds_app/presentation/funds/funds_cubit.dart';
+import 'package:btg_funds_app/presentation/portfolio/portfolio_cubit.dart';
+import 'package:btg_funds_app/presentation/transaction_history/transactions_cubit.dart';
 
 abstract class Injector {
   static final KiwiContainer container = KiwiContainer();

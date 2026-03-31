@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:btg_funds_app/domain/repositories/transaction_repository.dart';
-import 'package:btg_funds_app/presentation/cubits/transactions/transactions_state.dart';
+import 'package:btg_funds_app/presentation/transaction_history/transactions_state.dart';
 
 class TransactionsCubit extends Cubit<TransactionsState> {
   final TransactionRepository _transactionRepository;

@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:btg_funds_app/core/enums/fund_category.dart';
 import 'package:btg_funds_app/domain/repositories/fund_repository.dart';
-import 'package:btg_funds_app/presentation/cubits/funds/funds_state.dart';
+import 'package:btg_funds_app/presentation/funds/funds_state.dart';
 
 class FundsCubit extends Cubit<FundsState> {
   final FundRepository _fundRepository;

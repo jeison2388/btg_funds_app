@@ -4,8 +4,8 @@ import 'package:btg_funds_app/core/enums/notification_method.dart';
 import 'package:btg_funds_app/core/enums/transaction_type.dart';
 import 'package:btg_funds_app/domain/models/transaction.dart';
 import 'package:btg_funds_app/domain/repositories/transaction_repository.dart';
-import 'package:btg_funds_app/presentation/cubits/transactions/transactions_cubit.dart';
-import 'package:btg_funds_app/presentation/cubits/transactions/transactions_state.dart';
+import 'package:btg_funds_app/presentation/transaction_history/transactions_cubit.dart';
+import 'package:btg_funds_app/presentation/transaction_history/transactions_state.dart';
 
 class MockTransactionRepository extends Mock implements TransactionRepository {}
 

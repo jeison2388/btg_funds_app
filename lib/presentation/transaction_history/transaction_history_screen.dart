@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:btg_funds_app/core/enums/transaction_type.dart';
+import 'package:btg_funds_app/core/theme/app_theme.dart';
 import 'package:btg_funds_app/domain/models/transaction.dart';
-import 'package:btg_funds_app/presentation/cubits/transactions/transactions_cubit.dart';
-import 'package:btg_funds_app/presentation/cubits/transactions/transactions_state.dart';
+import 'package:btg_funds_app/presentation/transaction_history/transactions_cubit.dart';
+import 'package:btg_funds_app/presentation/transaction_history/transactions_state.dart';
 import 'package:btg_funds_app/presentation/widgets/btg_paginated_table.dart';
 import 'package:btg_funds_app/presentation/widgets/empty_state_widget.dart';
 
@@ -73,9 +74,21 @@ class _TransactionHistoryView extends StatelessWidget {
                 items: state.filteredTransactions,
                 rowBackgroundColor: (tx) {
                   if (tx.type == TransactionType.subscription) {
-                    return theme.colorScheme.error.withValues(alpha: 0.08);
+                    return Color.alphaBlend(
+                      theme.colorScheme.error.withValues(alpha: 0.12),
+                      theme.colorScheme.surface,
+                    );
                   }
-                  return const Color(0xFF2E7D32).withValues(alpha: 0.10);
+                  return Color.alphaBlend(
+                    AppTheme.successColor.withValues(alpha: 0.16),
+                    theme.colorScheme.surface,
+                  );
+                },
+                rowAccentColor: (tx) {
+                  if (tx.type == TransactionType.subscription) {
+                    return theme.colorScheme.error;
+                  }
+                  return AppTheme.successColor;
                 },
                 columns: [
                   BtgTableColumn<FundTransaction>(

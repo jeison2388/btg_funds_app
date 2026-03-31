@@ -3,8 +3,8 @@ import 'package:mocktail/mocktail.dart';
 import 'package:btg_funds_app/core/enums/fund_category.dart';
 import 'package:btg_funds_app/domain/models/fund.dart';
 import 'package:btg_funds_app/domain/repositories/fund_repository.dart';
-import 'package:btg_funds_app/presentation/cubits/funds/funds_cubit.dart';
-import 'package:btg_funds_app/presentation/cubits/funds/funds_state.dart';
+import 'package:btg_funds_app/presentation/funds/funds_cubit.dart';
+import 'package:btg_funds_app/presentation/funds/funds_state.dart';
 
 class MockFundRepository extends Mock implements FundRepository {}
 

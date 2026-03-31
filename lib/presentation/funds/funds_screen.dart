@@ -4,10 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:btg_funds_app/core/routes/app_router.gr.dart';
 import 'package:btg_funds_app/domain/models/fund.dart';
-import 'package:btg_funds_app/presentation/cubits/funds/funds_cubit.dart';
-import 'package:btg_funds_app/presentation/cubits/funds/funds_state.dart';
-import 'package:btg_funds_app/presentation/cubits/portfolio/portfolio_cubit.dart';
-import 'package:btg_funds_app/presentation/cubits/portfolio/portfolio_state.dart';
+import 'package:btg_funds_app/presentation/funds/funds_cubit.dart';
+import 'package:btg_funds_app/presentation/funds/funds_state.dart';
+import 'package:btg_funds_app/presentation/portfolio/portfolio_cubit.dart';
+import 'package:btg_funds_app/presentation/portfolio/portfolio_state.dart';
 import 'package:btg_funds_app/presentation/widgets/btg_paginated_table.dart';
 import 'package:btg_funds_app/presentation/widgets/empty_state_widget.dart';
 

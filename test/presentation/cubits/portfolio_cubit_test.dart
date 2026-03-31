@@ -7,8 +7,8 @@ import 'package:btg_funds_app/domain/models/fund.dart';
 import 'package:btg_funds_app/domain/models/transaction.dart';
 import 'package:btg_funds_app/domain/repositories/portfolio_repository.dart';
 import 'package:btg_funds_app/domain/repositories/transaction_repository.dart';
-import 'package:btg_funds_app/presentation/cubits/portfolio/portfolio_cubit.dart';
-import 'package:btg_funds_app/presentation/cubits/portfolio/portfolio_state.dart';
+import 'package:btg_funds_app/presentation/portfolio/portfolio_cubit.dart';
+import 'package:btg_funds_app/presentation/portfolio/portfolio_state.dart';
 
 class MockPortfolioRepository extends Mock implements PortfolioRepository {}
 

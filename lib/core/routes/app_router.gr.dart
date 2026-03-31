@@ -11,11 +11,13 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i5;
 import 'package:btg_funds_app/domain/models/fund.dart' as _i7;
-import 'package:btg_funds_app/presentation/screens/funds_screen.dart' as _i1;
-import 'package:btg_funds_app/presentation/screens/home_screen.dart' as _i2;
-import 'package:btg_funds_app/presentation/screens/subscribe_screen.dart'
+import 'package:btg_funds_app/presentation/funds/funds_screen.dart' as _i1;
+import 'package:btg_funds_app/presentation/home/home_screen.dart' as _i2;
+import 'package:btg_funds_app/presentation/portfolio/portfolio_screen.dart'
+    as _i8;
+import 'package:btg_funds_app/presentation/subscribe/subscribe_screen.dart'
     as _i3;
-import 'package:btg_funds_app/presentation/screens/transaction_history_screen.dart'
+import 'package:btg_funds_app/presentation/transaction_history/transaction_history_screen.dart'
     as _i4;
 import 'package:flutter/material.dart' as _i6;
 
@@ -52,7 +54,7 @@ class HomeRoute extends _i5.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i2.PortfolioScreen]
+/// [_i8.PortfolioScreen]
 class PortfolioRoute extends _i5.PageRouteInfo<void> {
   const PortfolioRoute({List<_i5.PageRouteInfo>? children})
       : super(PortfolioRoute.name, initialChildren: children);
@@ -62,7 +64,7 @@ class PortfolioRoute extends _i5.PageRouteInfo<void> {
   static _i5.PageInfo page = _i5.PageInfo(
     name,
     builder: (data) {
-      return const _i2.PortfolioScreen();
+      return const _i8.PortfolioScreen();
     },
   );
 }
